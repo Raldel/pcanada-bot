@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "jsdom": "^15.1.1",
     "node-async-loop": "^1.2.2",
     "proxy-checker": "git+https://git@github.com/pSnehanshu/node-proxy-checker.git",
-    "public-proxy-finder": "^0.1.1"
+    "public-proxy-finder": "^0.1.1",
+    "request": "^2.88.0"
   }
 }
