@@ -8,17 +8,17 @@ const host = 'app.petro-canada.ca';
 const androidAppId = 'com.petrocanada.my_petro_canada';
 
 // Fetch accounts.txt and login each email:password
-postLogin('email@gmail.net', 'password').catch(err => console.error(err));
+//postLogin('email@gmail.net', 'password').catch(err => console.error(err));
 
-/* var accounts = readline('./accounts.txt');
+ var accounts = readline('./accounts.txt');
 accounts.on('line', async function (line, lineCount, byteCount) {
     var split = line.split(':');
     var email = split[0];
     var password = split[1];
 
-    await postLogin(email, password);
+    postLogin(email, password).catch(err => console.error(err));
 });
- */
+
 
 // 1st step
 // Fetch login page and get some data
