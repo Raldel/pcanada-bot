@@ -27,12 +27,44 @@ function fetchLoginPageToken() {
             var eventvalidation = dom.window.document.getElementById('__EVENTVALIDATION').value;
             resolve({ viewstate, eventvalidation });
         });
-
     });
 }
 
 // 2nd step
 // Use that data and post login info
+
+function postLogin(email, password) {
+    return new Promise(async (resolve, reject) => {
+        var tokens = await fetchLoginPageToken();
+        
+        request({
+            method: 'POST',
+            url: loginPage,
+            headers: {
+                "Host": host,
+                "Upgrade-Insecure-Requests": "1",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US",
+                "X-Requested-With": androidAppId,
+                "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; vivo 1601 Build/MRA58K; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36",
+                "Referer": loginPage,
+                "Origin": "https://app.petro-canada.ca",
+                "Content-type": "application/x-www-form-urlencoded",
+            },
+            formData: {
+                __EVENTTARGET: '',
+                __EVENTARGUMENT: '',
+                __VIEWSTATE: tokens.viewstate,
+                __EVENTVALIDATION: tokens.eventvalidation,
+                'id351$txtEmail': email,
+                'id351$txtPassword': password,
+                'id351$btnSubmit': 'Log in',
+            },
+        }, function (error, response, body) {
+            console.log(body);
+        });
+    });
+}
 
 // 3rd step
 // If login success, fetch some user data
