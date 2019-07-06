@@ -1,0 +1,17 @@
+{
+  "name": "petro-canada-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-async-loop": "^1.2.2",
+    "proxy-checker": "git+https://git@github.com/pSnehanshu/node-proxy-checker.git",
+    "public-proxy-finder": "^0.1.1"
+  }
+}
