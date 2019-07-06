@@ -1,49 +1,39 @@
-var ProxyFinder = require('public-proxy-finder');
-var proxyChecker = require('proxy-checker');
-var asyncLoop = require('node-async-loop');
+const request = require('request');
+const jsdom = require('jsdom');
 
-//scrape and check proxies
-async function scrapeAndCheck(cb) {
-  console.log("Harvesting fresh proxies...");
-  ProxyFinder.all() //Retrieve an up-to-date list of SSL proxies
-    .filter(function (proxy) { 
-      return objectHasAllProps(proxy, ['IP Address', 'Port', 'Last Checked', 'Https'])
-              //&& (proxy['Last Checked'] < 60 * 15 * 1000) // Filter out any proxies that haven't been checked for over 30 minutes
-              && (proxy['Https'] == true);
-    })
-    .then(async function (proxyList) {
-      console.log('HTTPS ANON Proxies Scraped: ' + proxyList.length);
-      var newList = [];
-      var i = 0;
-      asyncLoop(proxyList, function (item, next) {
-        proxyChecker.checkProxy(
-          // The path to the file containing proxies
-          item['IP Address'],
-          item['Port'],
-          {
-            // the complete URL to check the proxy
-            url: checkProxyURL,
-            // an optional regex to check for the presence of some text on the page
-            regex: confirmWord,
-            https: false,//item.Https,
-            timeout: 120*1000,
-          },
-          // Callback function to be called after the check
-          function (host, port, ok, statusCode, err) {
-            console.log('('+(++i)+') ' + host + ':' + port + ' => '
-              + ok + ' (status: ' + statusCode + ', err: ' + err + ')');
-            if (!err) {
-              if (statusCode == 200) {
-                newList.push(host + ":" + port);
-              }
-            }
-            next();
-          }
-        );
-      }, function () {
-        console.log(newList);
-        console.log("Working Proxies:" + newList.length);
-        return cb(newList);
-      });
+const loginPage = 'https://app.petro-canada.ca/en/login.aspx?app';
+const host = 'app.petro-canada.ca';
+const androidAppId = 'com.petrocanada.my_petro_canada';
+
+// 1st step
+// Fetch login page and get some data
+
+function fetchLoginPageToken() {
+    return new Promise((resolve, reject) => {
+        request({
+            method: 'GET',
+            url: loginPage,
+            headers: {
+                "Host": host,
+                "Upgrade-Insecure-Requests": "1",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US",
+                "X-Requested-With": androidAppId,
+                "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; vivo 1601 Build/MRA58K; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36",
+            },
+        }, function (error, response, body) {
+            var dom = new jsdom.JSDOM(body);
+            var viewstate = dom.window.document.getElementById('__VIEWSTATE').value;
+            var eventvalidation = dom.window.document.getElementById('__EVENTVALIDATION').value;
+            resolve({ viewstate, eventvalidation });
+        });
+
     });
 }
+
+// 2nd step
+// Use that data and post login info
+
+// 3rd step
+// If login success, fetch some user data
+
